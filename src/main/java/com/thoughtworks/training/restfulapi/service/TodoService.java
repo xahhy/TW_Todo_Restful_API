@@ -32,8 +32,8 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
-        Todo newTodo = todo.setId(UUID.randomUUID().getMostSignificantBits());
-        todoList.put(newTodo.getId(), newTodo);
+        todo.setId(UUID.randomUUID().getMostSignificantBits());
+        todoList.put(todo.getId(), todo);
         return todo;
     }
 
