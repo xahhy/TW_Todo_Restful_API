@@ -20,7 +20,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> getTodos(@RequestParam(required = false) List<String> tags){
+    public Iterable<Todo> getTodos(@RequestParam(required = false) List<String> tags){
         System.out.println(tags);
         return todoService.getTodoList();
     }
@@ -42,7 +42,8 @@ public class TodoController {
 
     @PutMapping("/{id}")
     public Todo setTodo(@PathVariable Long id, @RequestBody Todo todo){
-        return todoService.updateTodo(id, todo);
+        todo.setId(id);
+        return todoService.updateTodo(todo);
     }
 
 }

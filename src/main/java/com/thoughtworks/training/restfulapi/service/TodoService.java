@@ -2,27 +2,35 @@ package com.thoughtworks.training.restfulapi.service;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.persist.TodoRepository;
+import org.aspectj.weaver.ast.Not;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class TodoService {
+
+    private TodoRepository todoRepository;
+
     private Map<Long, Todo> todoList = new HashMap<>();
 
-    public TodoService() {
-        todoList.put(1L, new Todo(1L, "meeting", "To Do", new Date()));
-        todoList.put(2L, new Todo(2L, "meeting with LY", "To Do", new Date()));
-        todoList.put(3L, new Todo(3L, "learn", "In progress", new Date()));
-        todoList.put(4L, new Todo(4L, "preparation", "Finished", new Date()));
+    @Autowired
+    public TodoService(TodoRepository todoRepository) {
+        this.todoRepository = todoRepository;
+        todoRepository.save(new Todo(1L, "meeting new", "To Do", new Date()));
+        todoRepository.save(new Todo(2L, "meeting with LY", "To Do", new Date()));
+        todoRepository.save(new Todo(3L, "learn", "In progress", new Date()));
+        todoRepository.save(new Todo(4L, "preparation", "Finished", new Date()));
     }
 
-    public List<Todo> getTodoList() {
-        return new ArrayList<Todo>(todoList.values());
+    public Iterable<Todo> getTodoList() {
+        return todoRepository.findAll();
     }
 
     public Todo getTodoById(long id) {
-        Todo todo = todoList.get(id);
+        Todo todo = todoRepository.findOne(id);
         if (todo != null) {
             return todo;
         } else {
@@ -32,20 +40,21 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
-        todo.setId(UUID.randomUUID().getMostSignificantBits());
-        todoList.put(todo.getId(), todo);
+        todoRepository.save(todo);
         return todo;
     }
 
     public Boolean deleteTodo(Long id) {
-        if (todoList.remove(id) == null) {
+        try {
+
+            todoRepository.delete(id);
+        } catch (Exception exception) {
             throw new NotFoundException();
         }
         return true;
     }
 
-    public Todo updateTodo(Long id, Todo newTodo) {
-        todoList.put(id, newTodo);
-        return todoList.get(id);
+    public Todo updateTodo(Todo newTodo) {
+        return todoRepository.save(newTodo);
     }
 }
