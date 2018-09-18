@@ -23,9 +23,9 @@ public class TodoService {
 
     public Todo getTodoById(long id) {
         Todo todo = todoList.get(id);
-        if (todo != null){
+        if (todo != null) {
             return todo;
-        }else {
+        } else {
             throw new NotFoundException();
         }
 
@@ -37,12 +37,11 @@ public class TodoService {
         return todo;
     }
 
-    public void deleteTodo(Long id) {
-        try {
-            todoList.remove(id);
-        } catch (Exception exception) {
+    public Boolean deleteTodo(Long id) {
+        if (todoList.remove(id) == null) {
             throw new NotFoundException();
         }
+        return true;
     }
 
     public Todo updateTodo(Long id, Todo newTodo) {
