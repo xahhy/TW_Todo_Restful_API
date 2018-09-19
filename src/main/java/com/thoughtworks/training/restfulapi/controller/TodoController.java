@@ -30,7 +30,6 @@ public class TodoController {
         if (name != null) {
             return todoService.getTodoListByName(name, pageable);
         }
-        System.out.println(pageable);
         return todoService.getPageableTodoList(pageable);
     }
 

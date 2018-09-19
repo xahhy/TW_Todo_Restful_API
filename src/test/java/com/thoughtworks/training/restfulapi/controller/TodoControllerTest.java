@@ -7,17 +7,22 @@ import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -38,6 +43,7 @@ public class TodoControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    Page<Todo> mockPage;
     Todo todo;
     Todo newTodo;
     private String SOME_TODO_NAME = "name";
@@ -49,17 +55,19 @@ public class TodoControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        todo = new Todo(0L, SOME_TODO_NAME, SOME_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(SOME_TODO_DUE_DATE), new ArrayList<>());
-        newTodo = new Todo(0L, NEW_TODO_NAME, NEW_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(NEW_TODO_DUE_DATE), new ArrayList<>());
+        todo = new Todo(0L, SOME_TODO_NAME, SOME_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(SOME_TODO_DUE_DATE), new HashSet<>());
+        newTodo = new Todo(0L, NEW_TODO_NAME, NEW_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(NEW_TODO_DUE_DATE), new HashSet<>());
         when(todoService.getTodoList()).thenReturn(Arrays.asList(
                 todo
         ));
+        mockPage = new PageImpl<>(Arrays.asList(todo));
     }
 
     @Test
     public void shouldGetAllTodos() throws Exception {
+        given(todoService.getPageableTodoList(any())).willReturn(mockPage);
         mockMvc.perform(get("/todos")).andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(0L));
+                .andExpect(jsonPath("$.content[0].id").value(0L));
     }
 
     @Test
