@@ -15,6 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 @Entity
 @ToString
+@EqualsAndHashCode(exclude = {"id"})
 public class Todo {
     @Id
     @GeneratedValue
@@ -28,7 +29,7 @@ public class Todo {
             timezone = "Asia/Shanghai")
     private Date dueDate;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "todo_tag",
             joinColumns = @JoinColumn(name = "todo_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")

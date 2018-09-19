@@ -13,7 +13,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"todos"})
 @EqualsAndHashCode(of = {"name"})
 public class Tag {
     @Id
@@ -22,7 +22,7 @@ public class Tag {
 
     private String name;
 
-    @ManyToMany(mappedBy = "tags", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Todo> todos = new HashSet<>();
 
