@@ -25,8 +25,12 @@ public class TodoService {
 //        todoRepository.save(new Todo(4L, "preparation", "Finished", new Date()));
     }
 
-    public Iterable<Todo> getTodoList() {
+    public List<Todo> getTodoList() {
         return todoRepository.findAll();
+    }
+
+    public List<Todo> getTodoListByName(String name){
+        return todoRepository.findAllByNameContaining(name);
     }
 
     public Todo getTodoById(long id) {
