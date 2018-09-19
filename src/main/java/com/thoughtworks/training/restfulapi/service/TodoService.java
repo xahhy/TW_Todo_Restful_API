@@ -3,9 +3,10 @@ package com.thoughtworks.training.restfulapi.service;
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -63,7 +64,7 @@ public class TodoService {
         return todoRepository.save(newTodo);
     }
 
-    public List<Todo> getPageableTodoList(Integer page, Integer size) {
-        return todoRepository.findAll(new PageRequest(page - 1, size)).getContent();
+    public Page<Todo> getPageableTodoList(Pageable pageable) {
+        return todoRepository.findAll(pageable);
     }
 }

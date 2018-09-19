@@ -3,6 +3,8 @@ package com.thoughtworks.training.restfulapi.controller;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,19 +22,16 @@ public class TodoController {
     }
 
     @GetMapping
-    public Iterable<Todo> getTodos(
+    public Page<Todo> getTodos(
             @RequestParam(required = false) List<String> tags,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size
+            Pageable pageable
     ) {
-        if (name != null) {
-            return todoService.getTodoListByName(name);
-        }
-        if (page != null && size != null){
-            return todoService.getPageableTodoList(page, size);
-        }
-        return todoService.getTodoList();
+//        if (name != null) {
+//            return todoService.getTodoListByName(name);
+//        }
+        System.out.println(pageable);
+        return todoService.getPageableTodoList(pageable);
     }
 
     @GetMapping("/{id}")
