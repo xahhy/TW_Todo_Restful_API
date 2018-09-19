@@ -31,8 +31,8 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
-    public List<Todo> getTodoListByName(String name){
-        return todoRepository.findAllByNameContaining(name);
+    public Page<Todo> getTodoListByName(String name, Pageable pageable){
+        return todoRepository.findAllByNameContaining(name, pageable);
     }
 
     public Todo getTodoById(long id) {

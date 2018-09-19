@@ -27,9 +27,9 @@ public class TodoController {
             @RequestParam(required = false) String name,
             Pageable pageable
     ) {
-//        if (name != null) {
-//            return todoService.getTodoListByName(name);
-//        }
+        if (name != null) {
+            return todoService.getTodoListByName(name, pageable);
+        }
         System.out.println(pageable);
         return todoService.getPageableTodoList(pageable);
     }
