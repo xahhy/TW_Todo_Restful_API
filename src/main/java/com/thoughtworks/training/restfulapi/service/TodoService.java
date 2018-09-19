@@ -5,6 +5,7 @@ import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -60,5 +61,9 @@ public class TodoService {
 
     public Todo updateTodo(Todo newTodo) {
         return todoRepository.save(newTodo);
+    }
+
+    public List<Todo> getPageableTodoList(Integer page, Integer size) {
+        return todoRepository.findAll(new PageRequest(page - 1, size)).getContent();
     }
 }

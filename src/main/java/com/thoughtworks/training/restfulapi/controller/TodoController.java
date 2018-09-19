@@ -22,10 +22,15 @@ public class TodoController {
     @GetMapping
     public Iterable<Todo> getTodos(
             @RequestParam(required = false) List<String> tags,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
     ) {
         if (name != null) {
             return todoService.getTodoListByName(name);
+        }
+        if (page != null && size != null){
+            return todoService.getPageableTodoList(page, size);
         }
         return todoService.getTodoList();
     }
