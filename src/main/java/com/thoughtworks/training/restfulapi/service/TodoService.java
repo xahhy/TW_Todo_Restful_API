@@ -1,7 +1,9 @@
 package com.thoughtworks.training.restfulapi.service;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
+import com.thoughtworks.training.restfulapi.model.Tag;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.persist.TagRepository;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -16,15 +19,14 @@ public class TodoService {
 
     private TodoRepository todoRepository;
 
+    private TagRepository tagRepository;
+
     private Map<Long, Todo> todoList = new HashMap<>();
 
     @Autowired
-    public TodoService(TodoRepository todoRepository) {
+    public TodoService(TodoRepository todoRepository, TagRepository tagRepository) {
         this.todoRepository = todoRepository;
-//        todoRepository.save(new Todo(1L, "meeting new", "To Do", new Date()));
-//        todoRepository.save(new Todo(2L, "meeting with LY", "To Do", new Date()));
-//        todoRepository.save(new Todo(3L, "learn", "In progress", new Date()));
-//        todoRepository.save(new Todo(4L, "preparation", "Finished", new Date()));
+        this.tagRepository = tagRepository;
     }
 
     public List<Todo> getTodoList() {

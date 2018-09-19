@@ -1,26 +1,23 @@
 package com.thoughtworks.training.restfulapi.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class Todo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     private String name;
     private String status;
@@ -31,13 +28,10 @@ public class Todo {
             timezone = "Asia/Shanghai")
     private Date dueDate;
 
-//    @ManyToMany(cascade = {
-//            CascadeType.PERSIST,
-//            CascadeType.MERGE
-//    })
-//    @JoinTable(name = "todo_tag",
-//            joinColumns = @JoinColumn(name = "todo_id"),
-//            inverseJoinColumns = @JoinColumn(name = "tag_id")
-//    )
-//    List<Tag> tags;
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,fetch = FetchType.EAGER)
+    @JoinTable(name = "todo_tag",
+            joinColumns = @JoinColumn(name = "todo_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
+    )
+    Set<Tag> tags = new HashSet<>();
 }
