@@ -13,11 +13,14 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
 
     private TodoRepository todoRepository;
+    @Autowired
+    private TagService tagService;
 
     private TagRepository tagRepository;
 
@@ -48,6 +51,9 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
+        todo.setTags(
+                todo.getTags().stream().map(tag -> tagService.save(tag)).collect(Collectors.toSet())
+        );
         todoRepository.save(todo);
         return todo;
     }
