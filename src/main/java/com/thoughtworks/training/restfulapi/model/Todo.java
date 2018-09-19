@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -22,7 +24,6 @@ public class Todo {
     private Long id;
     private String name;
     private String status;
-    //    @JsonProperty("timestamp")
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
             pattern = "yyyy-MM-dd",
@@ -30,4 +31,13 @@ public class Todo {
             timezone = "Asia/Shanghai")
     private Date dueDate;
 
+//    @ManyToMany(cascade = {
+//            CascadeType.PERSIST,
+//            CascadeType.MERGE
+//    })
+//    @JoinTable(name = "todo_tag",
+//            joinColumns = @JoinColumn(name = "todo_id"),
+//            inverseJoinColumns = @JoinColumn(name = "tag_id")
+//    )
+//    List<Tag> tags;
 }

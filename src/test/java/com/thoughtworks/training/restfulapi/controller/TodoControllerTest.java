@@ -75,7 +75,7 @@ public class TodoControllerTest {
 
     @Test
     public void shouldAddOneTodo() throws Exception {
-        when(todoService.addTodo(any())).thenReturn(todo);
+        when(todoService.addTodo(eq(todo))).thenReturn(todo);
         mockMvc.perform(
                 post("/todos")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
