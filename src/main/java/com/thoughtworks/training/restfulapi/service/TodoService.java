@@ -19,10 +19,10 @@ public class TodoService {
     @Autowired
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
-        todoRepository.save(new Todo(1L, "meeting new", "To Do", new Date()));
-        todoRepository.save(new Todo(2L, "meeting with LY", "To Do", new Date()));
-        todoRepository.save(new Todo(3L, "learn", "In progress", new Date()));
-        todoRepository.save(new Todo(4L, "preparation", "Finished", new Date()));
+//        todoRepository.save(new Todo(1L, "meeting new", "To Do", new Date()));
+//        todoRepository.save(new Todo(2L, "meeting with LY", "To Do", new Date()));
+//        todoRepository.save(new Todo(3L, "learn", "In progress", new Date()));
+//        todoRepository.save(new Todo(4L, "preparation", "Finished", new Date()));
     }
 
     public Iterable<Todo> getTodoList() {
