@@ -35,40 +35,24 @@ public class TodoController {
             HttpServletRequest request
     ) {
         Optional<User> user = getCurrentUser(request);
-        if (user.isPresent()){
-            return todoService.getPageableTodoList(user.get(), pageable);
-        }else {
-            throw new NotFoundException();
-        }
+        return todoService.getPageableTodoList(user.orElse(null), pageable);
 //        if (name != null) {
 //            return todoService.getTodoListByName(name, pageable);
 //        }
 //        return todoService.getPageableTodoList(pageable);
     }
 
-    private Optional<User> getCurrentUser(HttpServletRequest request) {
-        return Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals("sessionId"))
-                    .filter(cookie -> sessionService.getSessionUser(cookie.getValue()) != null)
-                    .map(cookie -> sessionService.getSessionUser(cookie.getValue()))
-                    .findFirst();
-    }
-
     @GetMapping("/{id}")
-    public Todo getTodo(@PathVariable Long id) {
-        return todoService.getTodoById(id);
+    public Todo getTodo(@PathVariable Long id, HttpServletRequest request) {
+        Optional<User> user = getCurrentUser(request);
+        return todoService.getTodoById(user.orElse(null), id);
     }
 
     @PostMapping
     public Todo addTodo(@RequestBody Todo todo, HttpServletRequest request) {
         Optional<User> user = getCurrentUser(request);
-        if (user.isPresent()){
-            todo.setUser(user.get());
-            return todoService.addTodo(todo);
-        }
-        else {
-            throw new NotFoundException();
-        }
+        todo.setUser(user.get());
+        return todoService.addTodo(todo);
     }
 
     @DeleteMapping("/{id}")
@@ -80,6 +64,16 @@ public class TodoController {
     public Todo setTodo(@PathVariable Long id, @RequestBody Todo todo) {
         todo.setId(id);
         return todoService.updateTodo(todo);
+    }
+
+    private Optional<User> getCurrentUser(HttpServletRequest request) {
+        Optional<User> currentUser = Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals("sessionId"))
+                .filter(cookie -> sessionService.getSessionUser(cookie.getValue()) != null)
+                .map(cookie -> sessionService.getSessionUser(cookie.getValue()))
+                .findFirst();
+        if (!currentUser.isPresent()) throw new NotFoundException();
+        return currentUser;
     }
 
 }

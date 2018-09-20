@@ -65,7 +65,6 @@ public class TodoService {
 
     public Boolean deleteTodo(Long id) {
         try {
-
             todoRepository.delete(id);
         } catch (Exception exception) {
             throw new NotFoundException();
@@ -84,5 +83,9 @@ public class TodoService {
 
     public Page<Todo> getPageableTodoList(User user, Pageable pageable) {
         return todoRepository.findAllByUser_Id(user.getId(), pageable);
+    }
+
+    public Todo getTodoById(User user, Long id) {
+        return todoRepository.findOneByIdAndUser_Id(id, user.getId());
     }
 }
