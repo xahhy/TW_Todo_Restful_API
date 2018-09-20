@@ -13,12 +13,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean validateUser(User user) {
+    public User getUser(User user) {
         User oldUser = userRepository.findByName(user.getName());
         if (oldUser != null){
-            return oldUser.getPassword().equals(user.getPassword());
+            return oldUser.getPassword().equals(user.getPassword()) ? oldUser : null;
         }else {
-            return false;
+            return null;
         }
     }
 }

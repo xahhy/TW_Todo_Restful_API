@@ -5,7 +5,6 @@ import com.thoughtworks.training.restfulapi.service.SessionService;
 import com.thoughtworks.training.restfulapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +27,10 @@ public class LoginController {
     @PostMapping
     public ResponseEntity login(@RequestBody User user,  HttpServletResponse res){
         String sessionId;
-        if (userService.validateUser(user)){
+        User loginUser = userService.getUser(user);
+        if (loginUser != null){
             HttpHeaders headers = new HttpHeaders();
-            sessionId = sessionService.createSession(user);
+            sessionId = sessionService.createSession(loginUser);
             res.addCookie(new Cookie("sessionId", sessionId));
             return ResponseEntity.ok().build();
         }else {

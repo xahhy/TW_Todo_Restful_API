@@ -3,6 +3,7 @@ package com.thoughtworks.training.restfulapi.service;
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Tag;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.persist.TagRepository;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,5 +80,9 @@ public class TodoService {
 
     public Page<Todo> getPageableTodoList(Pageable pageable) {
         return todoRepository.findAll(pageable);
+    }
+
+    public Page<Todo> getPageableTodoList(User user, Pageable pageable) {
+        return todoRepository.findAllByUser_Id(user.getId(), pageable);
     }
 }

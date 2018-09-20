@@ -21,4 +21,8 @@ public class SessionService {
         sessionRepository.put(sessionId, user);
         return sessionId;
     }
+
+    public User getSessionUser(String sessionId) {
+        return sessionRepository.get(sessionId);
+    }
 }

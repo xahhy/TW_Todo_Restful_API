@@ -15,4 +15,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     Page<Todo> findAllByNameContaining(String name, Pageable pageable);
     Page<Todo> findAllByTagsIn(List<Tag> tags, Pageable pageable);
     Page<Todo> findAllByDueDateBetween(Date startDate, Date endDate, Pageable pageable);
+    Page<Todo> findAllByUser_Id(Long id, Pageable pageable);
 }
