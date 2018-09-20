@@ -41,11 +41,10 @@ public class TodoService {
     public Todo getTodoById(long id) {
         User user = TokenService.getPrincipal();
         Todo todo = todoRepository.findOneByUser_IdAndId(user.getId(), id);
-        if (todo != null) {
-            return todo;
-        } else {
+        if (todo == null) {
             throw new NotFoundException();
         }
+        return todo;
     }
 
     public Todo addTodo(Todo todo) {
@@ -71,7 +70,13 @@ public class TodoService {
         return true;
     }
 
-    public Todo updateTodo(Todo newTodo) {
+    public Todo updateTodo(Long id, Todo newTodo) {
+        User user = TokenService.getPrincipal();
+        Todo _todo = todoRepository.findOneByUser_IdAndId(user.getId(), id);
+        if (_todo == null){
+            throw new NotFoundException();
+        }
+        newTodo.setId(id).setUser(user);
         bindTags(newTodo);
         return todoRepository.save(newTodo);
     }

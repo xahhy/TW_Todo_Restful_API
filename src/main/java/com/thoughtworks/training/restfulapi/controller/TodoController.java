@@ -57,8 +57,7 @@ public class TodoController {
 
     @PutMapping("/{id}")
     public Todo setTodo(@PathVariable Long id, @RequestBody Todo todo) {
-        todo.setId(id);
-        return todoService.updateTodo(todo);
+        return todoService.updateTodo(id, todo);
     }
 
     private Optional<User> getCurrentUser(HttpServletRequest request) {
