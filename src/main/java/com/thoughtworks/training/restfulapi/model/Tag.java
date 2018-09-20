@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = {"todos"})
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"todos"})
 public class Tag {
     @Id
     @GeneratedValue

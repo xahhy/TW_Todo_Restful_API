@@ -15,15 +15,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
 
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
-public class TodoRepositoryTest {
+public class TodoRepositoryTest{
 
     @Autowired
     TagRepository tagRepository;
@@ -42,8 +41,8 @@ public class TodoRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        tag1 = tagRepository.saveAndFlush(new Tag(0L, "tag1"));
-        tag2 = tagRepository.saveAndFlush(new Tag(2L, "tag2"));
+        tag1 = tagRepository.save(new Tag(0L, "tag1"));
+        tag2 = tagRepository.save(new Tag(2L, "tag2"));
         startDate = new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-01");
         endDate = new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-10");
         mockDate10_8 = new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-08");
@@ -53,26 +52,26 @@ public class TodoRepositoryTest {
                 .name("name")
                 .dueDate(mockDate10_8)
                 .status("todo")
-                .tags(new HashSet<>(Arrays.asList(
+                .tags(Arrays.asList(
                         tag1, tag2
-                )))
+                ))
                 .build();
         mockTodo10_11 = Todo.builder()
                 .id(11L)
                 .name("10_11")
                 .dueDate(mockDate10_11)
                 .status("todo")
-                .tags(new HashSet<>(Arrays.asList(
+                .tags(Arrays.asList(
                         tag1, tag2
-                )))
+                ))
                 .build();
-        todoRepository.saveAndFlush(mockTodo10_8);
+        todoRepository.save(mockTodo10_8);
     }
 
     @Test
     public void shouldGetTodoByName() {
         Page<Todo> result = todoRepository.findAllByNameContaining("name", any());
-        Assert.assertThat(result.getContent().get(0), equalTo(mockTodo10_8));
+        Assert.assertThat(result.getContent().get(0).toString(), is(mockTodo10_8.toString()));
     }
 
     @Test
@@ -80,13 +79,12 @@ public class TodoRepositoryTest {
         Todo mockTodo1 = mockTodo10_8.builder()
                 .id(2L)
                 .name("new name")
-                .tags(new HashSet<>(Arrays.asList(tag1)))
+                .tags(Arrays.asList(tag1))
                 .build();
-        todoRepository.saveAndFlush(mockTodo1);
+        todoRepository.save(mockTodo1);
         Page<Todo> result = todoRepository.findAllByTagsIn(Arrays.asList(tag1), pageable);
         //hasItem use equals and hashcode to judge two Objects match.
         Assert.assertThat(result.getContent(), hasItems(mockTodo10_8, mockTodo1));
-
     }
 
     @Test
@@ -94,9 +92,9 @@ public class TodoRepositoryTest {
         Todo mockTodo1 = mockTodo10_8.builder()
                 .id(2L)
                 .name("new name")
-                .tags(new HashSet<>(Arrays.asList(tag1)))
+                .tags(Arrays.asList(tag1))
                 .build();
-        todoRepository.saveAndFlush(mockTodo1);
+        todoRepository.save(mockTodo1);
         Page<Todo> result = todoRepository.findAllByTagsIn(Arrays.asList(tag1, tag2), pageable);
         //hasItem use equals and hashcode to judge two Objects match.
         Assert.assertThat(result.getContent(), hasItems(mockTodo10_8, mockTodo1));
