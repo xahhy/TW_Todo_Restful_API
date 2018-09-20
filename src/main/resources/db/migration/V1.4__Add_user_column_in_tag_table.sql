@@ -1,0 +1,1 @@
+ALTER table tag ADD COLUMN user_id bigint(20);

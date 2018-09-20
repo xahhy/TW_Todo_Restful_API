@@ -20,8 +20,11 @@ public class Tag {
     @Id
     @GeneratedValue
     private Long id;
-
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
+    private User user;
 
     @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
     @JsonIgnore

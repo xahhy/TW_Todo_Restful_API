@@ -112,7 +112,7 @@ public class TodoControllerTest {
 
     @Test
     public void shouldUpdateOneExistTodo() throws Exception {
-        when(todoService.updateTodo(any())).thenReturn(newTodo);
+        when(todoService.updateTodo(any(), any())).thenReturn(newTodo);
         mockMvc.perform(
                 put("/todos/{id}", 0)
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)

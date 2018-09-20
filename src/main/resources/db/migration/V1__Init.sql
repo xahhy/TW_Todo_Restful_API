@@ -15,8 +15,8 @@ CREATE TABLE tag(
 CREATE TABLE todo_tag(
   todo_id bigint(20) NOT NULL,
   tag_id  bigint(20) NOT NULL,
-  CONSTRAINT fk_todo FOREIGN KEY (todo_id) REFERENCES todo(id),
-  CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag(id),
+--   CONSTRAINT fk_todo FOREIGN KEY (todo_id) REFERENCES todo(id),
+--   CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag(id),
   PRIMARY KEY(todo_id,tag_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
