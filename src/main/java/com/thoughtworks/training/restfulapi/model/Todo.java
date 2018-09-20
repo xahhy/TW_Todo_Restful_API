@@ -8,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
@@ -34,5 +35,14 @@ public class Todo {
             joinColumns = @JoinColumn(name = "todo_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
+    @JsonIgnore
     Set<Tag> tags = new HashSet<>();
+
+    @JsonProperty("tags")
+    @Transient
+    public Set<Long> getTagsId() {
+        return tags.stream().map(Tag::getId).collect(Collectors.toSet());
+    }
+
+
 }

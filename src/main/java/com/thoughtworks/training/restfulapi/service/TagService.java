@@ -10,15 +10,14 @@ public class TagService {
     @Autowired
     TagRepository tagRepository;
 
-    Tag save(Tag tag){
+    Tag save(Tag tag) {
         Tag result = tagRepository.findByName(tag.getName());
-        if (result == null){
+        if (result == null) {
             return tagRepository.save(tag);
-        }
-        else return result;
+        } else return result;
     }
 
-    Boolean isExistByName(Tag tag){
+    Boolean isExistByName(Tag tag) {
         return tagRepository.existsByName(tag.getName());
     }
 }

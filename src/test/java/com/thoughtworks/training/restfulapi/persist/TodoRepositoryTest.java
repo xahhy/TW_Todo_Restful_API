@@ -42,7 +42,7 @@ public class TodoRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        tag1 = tagRepository.saveAndFlush(new Tag(1L, "tag1"));
+        tag1 = tagRepository.saveAndFlush(new Tag(0L, "tag1"));
         tag2 = tagRepository.saveAndFlush(new Tag(2L, "tag2"));
         startDate = new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-01");
         endDate = new SimpleDateFormat("yyyy-MM-dd").parse("2018-10-10");

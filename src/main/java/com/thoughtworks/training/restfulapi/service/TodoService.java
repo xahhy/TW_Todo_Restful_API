@@ -51,11 +51,15 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
+        bindTags(todo);
+        todoRepository.save(todo);
+        return todo;
+    }
+
+    private void bindTags(Todo todo) {
         todo.setTags(
                 todo.getTags().stream().map(tag -> tagService.save(tag)).collect(Collectors.toSet())
         );
-        todoRepository.save(todo);
-        return todo;
     }
 
     public Boolean deleteTodo(Long id) {
@@ -69,6 +73,7 @@ public class TodoService {
     }
 
     public Todo updateTodo(Todo newTodo) {
+        bindTags(newTodo);
         return todoRepository.save(newTodo);
     }
 
