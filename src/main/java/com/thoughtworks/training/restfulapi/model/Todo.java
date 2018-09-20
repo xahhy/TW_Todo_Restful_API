@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;

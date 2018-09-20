@@ -31,8 +31,7 @@ public class TodoController {
     public Page<Todo> getTodos(
             @RequestParam(required = false) List<String> tags,
             @RequestParam(required = false) String name,
-            Pageable pageable,
-            HttpServletRequest request
+            Pageable pageable
     ) {
         return todoService.getPageableTodoList(pageable);
 //        if (name != null) {

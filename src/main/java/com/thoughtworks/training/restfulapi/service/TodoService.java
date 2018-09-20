@@ -8,7 +8,6 @@ import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,12 +34,12 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
-    public Page<Todo> getTodoListByName(String name, Pageable pageable){
+    public Page<Todo> getTodoListByName(String name, Pageable pageable) {
         return todoRepository.findAllByNameContaining(name, pageable);
     }
 
     public Todo getTodoById(long id) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = TokenService.getPrincipal();
         Todo todo = todoRepository.findOneByUser_IdAndId(user.getId(), id);
         if (todo != null) {
             return todo;
@@ -50,7 +49,7 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = TokenService.getPrincipal();
         todo.setUser(user);
         bindTags(todo);
         todoRepository.save(todo);
@@ -64,11 +63,11 @@ public class TodoService {
     }
 
     public Boolean deleteTodo(Long id) {
-        try {
-            todoRepository.delete(id);
-        } catch (Exception exception) {
+        User user = TokenService.getPrincipal();
+        if (todoRepository.findOneByUser_IdAndId(user.getId(), id) == null) {
             throw new NotFoundException();
         }
+        todoRepository.deleteByUser_IdAndId(user.getId(), id);
         return true;
     }
 
@@ -79,7 +78,7 @@ public class TodoService {
 
 
     public Page<Todo> getPageableTodoList(Pageable pageable) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = TokenService.getPrincipal();
         return todoRepository.findAllByUser_Id(user.getId(), pageable);
     }
 
