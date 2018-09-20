@@ -1,18 +1,16 @@
 package com.thoughtworks.training.restfulapi.service;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
-import com.thoughtworks.training.restfulapi.model.Tag;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.persist.TagRepository;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,16 +40,18 @@ public class TodoService {
     }
 
     public Todo getTodoById(long id) {
-        Todo todo = todoRepository.findOne(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Todo todo = todoRepository.findOneByUser_IdAndId(user.getId(), id);
         if (todo != null) {
             return todo;
         } else {
             throw new NotFoundException();
         }
-
     }
 
     public Todo addTodo(Todo todo) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        todo.setUser(user);
         bindTags(todo);
         todoRepository.save(todo);
         return todo;
@@ -77,15 +77,13 @@ public class TodoService {
         return todoRepository.save(newTodo);
     }
 
-    public Page<Todo> getPageableTodoList(Pageable pageable) {
-        return todoRepository.findAll(pageable);
-    }
 
-    public Page<Todo> getPageableTodoList(User user, Pageable pageable) {
+    public Page<Todo> getPageableTodoList(Pageable pageable) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return todoRepository.findAllByUser_Id(user.getId(), pageable);
     }
 
     public Todo getTodoById(User user, Long id) {
-        return todoRepository.findOneByIdAndUser_Id(id, user.getId());
+        return todoRepository.findOneByUser_IdAndId(id, user.getId());
     }
 }

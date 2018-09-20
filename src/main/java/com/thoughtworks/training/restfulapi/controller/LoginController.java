@@ -1,7 +1,7 @@
 package com.thoughtworks.training.restfulapi.controller;
 
 import com.thoughtworks.training.restfulapi.model.User;
-import com.thoughtworks.training.restfulapi.service.SessionService;
+import com.thoughtworks.training.restfulapi.service.TokenService;
 import com.thoughtworks.training.restfulapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,17 +22,15 @@ public class LoginController {
     UserService userService;
 
     @Autowired
-    SessionService sessionService;
+    TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity login(@RequestBody User user,  HttpServletResponse res){
+    public ResponseEntity login(@RequestBody User user){
         String sessionId;
         User loginUser = userService.getUser(user);
         if (loginUser != null){
-            HttpHeaders headers = new HttpHeaders();
-            sessionId = sessionService.createSession(loginUser);
-            res.addCookie(new Cookie("sessionId", sessionId));
-            return ResponseEntity.ok().build();
+            sessionId = tokenService.createSession(loginUser);
+            return ResponseEntity.ok().body(sessionId);
         }else {
             return ResponseEntity.notFound().build();
         }

@@ -3,18 +3,18 @@ package com.thoughtworks.training.restfulapi.controller;
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.model.User;
-import com.thoughtworks.training.restfulapi.service.SessionService;
+import com.thoughtworks.training.restfulapi.service.TokenService;
 import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/todos")
@@ -25,7 +25,7 @@ public class TodoController {
     private TodoService todoService;
 
     @Autowired
-    private SessionService sessionService;
+    private TokenService tokenService;
 
     @GetMapping
     public Page<Todo> getTodos(
@@ -34,8 +34,7 @@ public class TodoController {
             Pageable pageable,
             HttpServletRequest request
     ) {
-        Optional<User> user = getCurrentUser(request);
-        return todoService.getPageableTodoList(user.orElse(null), pageable);
+        return todoService.getPageableTodoList(pageable);
 //        if (name != null) {
 //            return todoService.getTodoListByName(name, pageable);
 //        }
@@ -43,15 +42,12 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public Todo getTodo(@PathVariable Long id, HttpServletRequest request) {
-        Optional<User> user = getCurrentUser(request);
-        return todoService.getTodoById(user.orElse(null), id);
+    public Todo getTodo(@PathVariable Long id) {
+        return todoService.getTodoById(id);
     }
 
     @PostMapping
-    public Todo addTodo(@RequestBody Todo todo, HttpServletRequest request) {
-        Optional<User> user = getCurrentUser(request);
-        todo.setUser(user.get());
+    public Todo addTodo(@RequestBody Todo todo) {
         return todoService.addTodo(todo);
     }
 
@@ -69,8 +65,8 @@ public class TodoController {
     private Optional<User> getCurrentUser(HttpServletRequest request) {
         Optional<User> currentUser = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals("sessionId"))
-                .filter(cookie -> sessionService.getSessionUser(cookie.getValue()) != null)
-                .map(cookie -> sessionService.getSessionUser(cookie.getValue()))
+                .filter(cookie -> tokenService.getUserFromToken(cookie.getValue()) != null)
+                .map(cookie -> tokenService.getUserFromToken(cookie.getValue()))
                 .findFirst();
         if (!currentUser.isPresent()) throw new NotFoundException();
         return currentUser;

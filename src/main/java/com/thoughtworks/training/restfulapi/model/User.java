@@ -19,8 +19,4 @@ public class User {
 
     private String name;
     private String password;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Todo> todos;
 }
