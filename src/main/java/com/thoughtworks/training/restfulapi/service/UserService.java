@@ -12,4 +12,13 @@ public class UserService {
     public User addUser(User user){
         return userRepository.save(user);
     }
+
+    public boolean validateUser(User user) {
+        User oldUser = userRepository.findByName(user.getName());
+        if (oldUser != null){
+            return oldUser.getPassword().equals(user.getPassword());
+        }else {
+            return false;
+        }
+    }
 }
