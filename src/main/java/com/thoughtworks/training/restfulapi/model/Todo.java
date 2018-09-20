@@ -23,6 +23,9 @@ public class Todo {
     private Long id;
     private String name;
     private String status;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
             pattern = "yyyy-MM-dd",
