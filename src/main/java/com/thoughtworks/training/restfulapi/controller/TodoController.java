@@ -1,5 +1,6 @@
 package com.thoughtworks.training.restfulapi.controller;
 
+import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.service.SessionService;
@@ -33,17 +34,24 @@ public class TodoController {
             Pageable pageable,
             HttpServletRequest request
     ) {
-        Optional<User> User = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("sessionId"))
-                .map(cookie -> sessionService.getSessionUser(cookie.getValue()))
-                .findFirst();
-        if (User.isPresent()){
-            return todoService.getPageableTodoList(User.get(), pageable);
+        Optional<User> user = getCurrentUser(request);
+        if (user.isPresent()){
+            return todoService.getPageableTodoList(user.get(), pageable);
+        }else {
+            throw new NotFoundException();
         }
-        if (name != null) {
-            return todoService.getTodoListByName(name, pageable);
-        }
-        return todoService.getPageableTodoList(pageable);
+//        if (name != null) {
+//            return todoService.getTodoListByName(name, pageable);
+//        }
+//        return todoService.getPageableTodoList(pageable);
+    }
+
+    private Optional<User> getCurrentUser(HttpServletRequest request) {
+        return Arrays.stream(request.getCookies())
+                    .filter(cookie -> cookie.getName().equals("sessionId"))
+                    .filter(cookie -> sessionService.getSessionUser(cookie.getValue()) != null)
+                    .map(cookie -> sessionService.getSessionUser(cookie.getValue()))
+                    .findFirst();
     }
 
     @GetMapping("/{id}")
@@ -52,8 +60,15 @@ public class TodoController {
     }
 
     @PostMapping
-    public Todo addTodo(@RequestBody Todo todo) {
-        return todoService.addTodo(todo);
+    public Todo addTodo(@RequestBody Todo todo, HttpServletRequest request) {
+        Optional<User> user = getCurrentUser(request);
+        if (user.isPresent()){
+            todo.setUser(user.get());
+            return todoService.addTodo(todo);
+        }
+        else {
+            throw new NotFoundException();
+        }
     }
 
     @DeleteMapping("/{id}")

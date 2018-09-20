@@ -25,6 +25,7 @@ public class Todo {
     private String status;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
     private User user;
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,

@@ -3,6 +3,7 @@ package com.thoughtworks.training.restfulapi.controller;
 import com.thoughtworks.training.restfulapi.TestUtil;
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,8 +56,20 @@ public class TodoControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        todo = new Todo(0L, SOME_TODO_NAME, SOME_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(SOME_TODO_DUE_DATE), new HashSet<>());
-        newTodo = new Todo(0L, NEW_TODO_NAME, NEW_TODO_STATUS, new SimpleDateFormat("yyyy-MM-dd").parse(NEW_TODO_DUE_DATE), new HashSet<>());
+        todo = Todo.builder()
+                .id(0L)
+                .name(SOME_TODO_NAME)
+                .status(SOME_TODO_STATUS)
+                .dueDate(new SimpleDateFormat("yyyy-MM-dd").parse(SOME_TODO_DUE_DATE))
+                .tags(new HashSet<>())
+                .build();
+        todo = Todo.builder()
+                .id(0L)
+                .name(NEW_TODO_NAME)
+                .status(NEW_TODO_STATUS)
+                .dueDate(new SimpleDateFormat("yyyy-MM-dd").parse(NEW_TODO_DUE_DATE))
+                .tags(new HashSet<>())
+                .build();
         when(todoService.getTodoList()).thenReturn(Arrays.asList(
                 todo
         ));
