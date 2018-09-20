@@ -5,6 +5,7 @@ import com.thoughtworks.training.restfulapi.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -14,7 +15,7 @@ public class TagController {
     TagService tagService;
 
     @GetMapping
-    public Set<Tag> getTags(){
+    public List<Tag> getTags(){
         return tagService.getTags();
     }
 

@@ -57,7 +57,7 @@ public class TodoService {
 
     private void bindTags(Todo todo) {
         todo.setTags(
-                todo.getTags().stream().map(tag -> tagService.save(tag)).collect(Collectors.toSet())
+                todo.getTags().stream().map(tag -> tagService.getTagById(tag)).filter(Objects::nonNull).collect(Collectors.toList())
         );
     }
 

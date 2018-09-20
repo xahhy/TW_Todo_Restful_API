@@ -19,6 +19,7 @@ public class TokenService {
 
     public String createSession(User user) {
         String sessionId = UUID.randomUUID().toString();
+        sessionId = "hehongyuan";
         tokenRepository.put(sessionId, user);
         return sessionId;
     }

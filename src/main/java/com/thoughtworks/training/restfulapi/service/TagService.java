@@ -6,6 +6,7 @@ import com.thoughtworks.training.restfulapi.persist.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -13,10 +14,11 @@ public class TagService {
     @Autowired
     TagRepository tagRepository;
 
-    Tag save(Tag tag) {
-        Tag result = tagRepository.findByName(tag.getName());
+    Tag getTagById(Tag tag) {
+        User user = TokenService.getPrincipal();
+        Tag result = tagRepository.findByUser_IdAndId(user.getId(), tag.getId());
         if (result == null) {
-            return tagRepository.save(tag);
+            return null;
         } else return result;
     }
 
@@ -24,7 +26,7 @@ public class TagService {
         return tagRepository.existsByName(tag.getName());
     }
 
-    public Set<Tag> getTags() {
+    public List<Tag> getTags() {
         User user = TokenService.getPrincipal();
         return tagRepository.findAllByUser_Id(user.getId());
     }

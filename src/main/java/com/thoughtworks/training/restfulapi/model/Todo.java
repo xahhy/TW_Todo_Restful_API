@@ -41,18 +41,19 @@ public class Todo {
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     @JsonIgnore
-    Set<Tag> tags = new HashSet<>();
+    @JsonManagedReference
+    List<Tag> tags = new ArrayList<>();
 
     @Transient
     @JsonGetter("tags")
-    public Set<Long> getTagsId() {
-        return tags.stream().map(Tag::getId).collect(Collectors.toSet());
+    public List<Long> getTagsId() {
+        return tags.stream().map(Tag::getId).collect(Collectors.toList());
     }
 
 
     @Transient
     @JsonSetter("tags")
     public void setTagsId(List<Long> tagsId) {
-        this.tags = tagsId.stream().map(tagId -> Tag.builder().id(tagId).build()).collect(Collectors.toSet());
+        this.tags = tagsId.stream().map(tagId -> Tag.builder().id(tagId).build()).collect(Collectors.toList());
     }
 }
