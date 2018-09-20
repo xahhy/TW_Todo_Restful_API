@@ -84,6 +84,8 @@ public class TodoRepositoryTest{
         todoRepository.save(mockTodo1);
         Page<Todo> result = todoRepository.findAllByTagsIn(Arrays.asList(tag1), pageable);
         //hasItem use equals and hashcode to judge two Objects match.
+        //TODO: 这里在对比两个Todo对象是否相等时会返回不相等的结果.没有正确为Todo.tags这个列表属性正确生成equals方法
+        //可以在调试终端中查看result.getContent().get(0).tags.equals(mockTodo10_8.tags)的值是false
         Assert.assertThat(result.getContent(), hasItems(mockTodo10_8, mockTodo1));
     }
 

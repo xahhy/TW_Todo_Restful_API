@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Entity
 @ToString
-@EqualsAndHashCode(exclude = {"id", "tags"})
+@EqualsAndHashCode(exclude = {"id"})
 public class Todo {
     @Id
     @GeneratedValue
