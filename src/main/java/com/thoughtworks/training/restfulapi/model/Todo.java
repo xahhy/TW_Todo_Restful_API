@@ -1,8 +1,6 @@
 package com.thoughtworks.training.restfulapi.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -37,7 +35,7 @@ public class Todo {
             timezone = "Asia/Shanghai")
     private Date dueDate;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany//(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "todo_tag",
             joinColumns = @JoinColumn(name = "todo_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
@@ -45,11 +43,16 @@ public class Todo {
     @JsonIgnore
     Set<Tag> tags = new HashSet<>();
 
-    @JsonProperty("tags")
     @Transient
+    @JsonGetter("tags")
     public Set<Long> getTagsId() {
         return tags.stream().map(Tag::getId).collect(Collectors.toSet());
     }
 
 
+    @Transient
+    @JsonSetter("tags")
+    public void setTagsId(List<Long> tagsId) {
+        this.tags = tagsId.stream().map(tagId -> Tag.builder().id(tagId).build()).collect(Collectors.toSet());
+    }
 }
