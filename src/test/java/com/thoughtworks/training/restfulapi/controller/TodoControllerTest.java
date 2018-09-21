@@ -5,7 +5,6 @@ import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,7 @@ public class TodoControllerTest {
         when(todoService.getTodoList()).thenReturn(Arrays.asList(
                 todo
         ));
-        given(todoService.getPageableTodoList(any())).willReturn(mockPage);
+        given(todoService.getPageableTodoList(, any())).willReturn(mockPage);
         mockMvc.perform(get("/todos")).andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(0L));
     }

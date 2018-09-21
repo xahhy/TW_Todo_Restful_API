@@ -21,17 +21,18 @@ public class LoginFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenService tokenService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // get token from header
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null){
+        if (header != null) {
             User userFromToken = tokenService.getUserFromToken(header);
-            // verify token
-            if (userFromToken == null){
+            if (userFromToken == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+            // verify token
             // put user to securtiy context
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(userFromToken, "", new ArrayList<>())

@@ -2,18 +2,17 @@ package com.thoughtworks.training.restfulapi.controller;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.model.TodoSearcher;
 import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.service.TokenService;
 import com.thoughtworks.training.restfulapi.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,12 +27,8 @@ public class TodoController {
     private TokenService tokenService;
 
     @GetMapping
-    public Page<Todo> getTodos(
-            @RequestParam(required = false) List<String> tags,
-            @RequestParam(required = false) String name,
-            Pageable pageable
-    ) {
-        return todoService.getPageableTodoList(pageable);
+    public Page<Todo> getTodos(@ModelAttribute TodoSearcher todoSearcher, Pageable pageable) {
+        return todoService.getPageableTodoList(todoSearcher, pageable);
 //        if (name != null) {
 //            return todoService.getTodoListByName(name, pageable);
 //        }

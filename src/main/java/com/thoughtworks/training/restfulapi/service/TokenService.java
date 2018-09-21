@@ -35,7 +35,7 @@ public class TokenService {
                     .getBody();
             return userService.getUserById(Long.parseLong(claims.get("userId").toString()));
         }catch (Exception exception){
-            throw new UnauthorizedException();
+            return null;
         }
     }
 

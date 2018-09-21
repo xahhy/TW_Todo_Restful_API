@@ -2,14 +2,17 @@ package com.thoughtworks.training.restfulapi.service;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
 import com.thoughtworks.training.restfulapi.model.Todo;
+import com.thoughtworks.training.restfulapi.model.TodoSearcher;
 import com.thoughtworks.training.restfulapi.model.User;
 import com.thoughtworks.training.restfulapi.persist.TagRepository;
 import com.thoughtworks.training.restfulapi.persist.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,10 +35,6 @@ public class TodoService {
 
     public List<Todo> getTodoList() {
         return todoRepository.findAll();
-    }
-
-    public Page<Todo> getTodoListByName(String name, Pageable pageable) {
-        return todoRepository.findAllByNameContaining(name, pageable);
     }
 
     public Todo getTodoById(long id) {
@@ -82,12 +81,43 @@ public class TodoService {
     }
 
 
-    public Page<Todo> getPageableTodoList(Pageable pageable) {
+    public Page<Todo> getPageableTodoList(TodoSearcher todoSearcher, Pageable pageable) {
         User user = TokenService.getPrincipal();
-        return todoRepository.findAllByUser_Id(user.getId(), pageable);
+        return todoRepository.findAll(getWhereClause(todoSearcher), pageable);
+//        return todoRepository.findAllByUser_Id(user.getId(), pageable);
     }
 
     public Todo getTodoById(User user, Long id) {
         return todoRepository.findOneByUser_IdAndId(id, user.getId());
+    }
+
+    private Specification<Todo> getWhereClause(final TodoSearcher todoSearcher) {
+        User user = TokenService.getPrincipal();
+        return new Specification<Todo>() {
+            @Override
+            public Predicate toPredicate(Root<Todo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicate = new ArrayList<>();
+                if (todoSearcher.getName() != null) {
+                    predicate.add(cb.like(root.get("name").as(String.class), "%" + todoSearcher.getName() + "%"));
+                }
+                predicate.add(cb.equal(root.<User>get("user").as(User.class), user));
+//                if(todoSearcher.getPostTimeEnd()!=null){
+//                    predicate.add(cb.lessThanOrEqualTo(root.get("postTime").as(Date.class), todoSearcher.getPostTimeEnd()));
+//                }
+//                if(todoSearcher.getRecTimeStart()!=null){
+//                    predicate.add(cb.greaterThanOrEqualTo(root.get("recommendTime").as(Date.class), todoSearcher.getRecTimeStart()));
+//                }
+//                if (todoSearcher.getRecTimeEnd()!=null){
+//                    predicate.add(cb.lessThanOrEqualTo(root.get("recommendTime").as(Date.class), todoSearcher.getRecTimeEnd()));
+//                }
+//                if (StringUtils.isNotBlank(todoSearcher.getNickname())){
+//                    //两张表关联查询
+//                    Join<Todo,User> userJoin = root.join(root.getModel().getSingularAttribute("user",User.class),JoinType.LEFT);
+//                    predicate.add(cb.like(userJoin.get("nickname").as(String.class), "%" + todoSearcher.getNickname() + "%"));
+//                }
+                Predicate[] pre = new Predicate[predicate.size()];
+                return query.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
     }
 }
