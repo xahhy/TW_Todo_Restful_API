@@ -33,6 +33,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.flywaydb:flyway-core:5.1.4')
 	compile('org.springframework.boot:spring-boot-starter-security')
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')

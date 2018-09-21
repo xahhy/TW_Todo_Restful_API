@@ -1,6 +1,12 @@
 package com.thoughtworks.training.restfulapi.service;
 
+import com.thoughtworks.training.restfulapi.exceptions.UnauthorizedException;
 import com.thoughtworks.training.restfulapi.model.User;
+import com.thoughtworks.training.restfulapi.persist.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -10,22 +16,27 @@ import java.util.UUID;
 
 @Service
 public class TokenService {
-    Map<String, User> tokenRepository;
+    @Autowired
+    UserService userService;
 
-    public TokenService() {
-        this.tokenRepository = new HashMap<>();
+    public String createToken(User user) {
+        String token = Jwts.builder()
+                .claim("userId", user.getId())
+                .signWith(SignatureAlgorithm.HS512, "password".getBytes())
+                .compact();
+        return token;
     }
 
-
-    public String createSession(User user) {
-        String sessionId = UUID.randomUUID().toString();
-        sessionId = "hehongyuan";
-        tokenRepository.put(sessionId, user);
-        return sessionId;
-    }
-
-    public User getUserFromToken(String sessionId) {
-        return tokenRepository.get(sessionId);
+    public User getUserFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey("password".getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
+            return userService.getUserById(Long.parseLong(claims.get("userId").toString()));
+        }catch (Exception exception){
+            throw new UnauthorizedException();
+        }
     }
 
     public static User getPrincipal() {
