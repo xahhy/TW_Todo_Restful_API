@@ -72,7 +72,7 @@ public class TodoService {
     public Todo updateTodo(Long id, Todo newTodo) {
         User user = TokenService.getPrincipal();
         Todo _todo = todoRepository.findOneByUser_IdAndId(user.getId(), id);
-        if (_todo == null){
+        if (_todo == null) {
             throw new NotFoundException();
         }
         newTodo.setId(id).setUser(user);
@@ -100,10 +100,15 @@ public class TodoService {
                 if (todoSearcher.getName() != null) {
                     predicate.add(cb.like(root.get("name").as(String.class), "%" + todoSearcher.getName() + "%"));
                 }
+                if (todoSearcher.getStartDate() != null || todoSearcher.getEndDate() != null) {
+                    if (todoSearcher.getStartDate() != null) {
+                        predicate.add(cb.greaterThanOrEqualTo(root.get("dueDate").as(Date.class), todoSearcher.getStartDate()));
+                    }
+                    if (todoSearcher.getEndDate() != null) {
+                        predicate.add(cb.lessThanOrEqualTo(root.get("dueDate").as(Date.class), todoSearcher.getEndDate()));
+                    }
+                }
                 predicate.add(cb.equal(root.<User>get("user").as(User.class), user));
-//                if(todoSearcher.getPostTimeEnd()!=null){
-//                    predicate.add(cb.lessThanOrEqualTo(root.get("postTime").as(Date.class), todoSearcher.getPostTimeEnd()));
-//                }
 //                if(todoSearcher.getRecTimeStart()!=null){
 //                    predicate.add(cb.greaterThanOrEqualTo(root.get("recommendTime").as(Date.class), todoSearcher.getRecTimeStart()));
 //                }
