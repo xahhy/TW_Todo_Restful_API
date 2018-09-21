@@ -1,6 +1,7 @@
 package com.thoughtworks.training.restfulapi.service;
 
 import com.thoughtworks.training.restfulapi.exceptions.NotFoundException;
+import com.thoughtworks.training.restfulapi.model.Tag;
 import com.thoughtworks.training.restfulapi.model.Todo;
 import com.thoughtworks.training.restfulapi.model.TodoSearcher;
 import com.thoughtworks.training.restfulapi.model.User;
@@ -24,8 +25,6 @@ public class TodoService {
     private TagService tagService;
 
     private TagRepository tagRepository;
-
-    private Map<Long, Todo> todoList = new HashMap<>();
 
     @Autowired
     public TodoService(TodoRepository todoRepository, TagRepository tagRepository) {
@@ -84,11 +83,6 @@ public class TodoService {
     public Page<Todo> getPageableTodoList(TodoSearcher todoSearcher, Pageable pageable) {
         User user = TokenService.getPrincipal();
         return todoRepository.findAll(getWhereClause(todoSearcher), pageable);
-//        return todoRepository.findAllByUser_Id(user.getId(), pageable);
-    }
-
-    public Todo getTodoById(User user, Long id) {
-        return todoRepository.findOneByUser_IdAndId(id, user.getId());
     }
 
     private Specification<Todo> getWhereClause(final TodoSearcher todoSearcher) {
@@ -108,18 +102,14 @@ public class TodoService {
                         predicate.add(cb.lessThanOrEqualTo(root.get("dueDate").as(Date.class), todoSearcher.getEndDate()));
                     }
                 }
+                if (todoSearcher.getTagsId() != null) {
+                    todoSearcher.getTagsId().stream().forEach(
+                            tagId -> predicate.add(
+                                    root.<Todo, Tag>joinList("tags").get("id").in(tagId)
+                            )
+                    );
+                }
                 predicate.add(cb.equal(root.<User>get("user").as(User.class), user));
-//                if(todoSearcher.getRecTimeStart()!=null){
-//                    predicate.add(cb.greaterThanOrEqualTo(root.get("recommendTime").as(Date.class), todoSearcher.getRecTimeStart()));
-//                }
-//                if (todoSearcher.getRecTimeEnd()!=null){
-//                    predicate.add(cb.lessThanOrEqualTo(root.get("recommendTime").as(Date.class), todoSearcher.getRecTimeEnd()));
-//                }
-//                if (StringUtils.isNotBlank(todoSearcher.getNickname())){
-//                    //两张表关联查询
-//                    Join<Todo,User> userJoin = root.join(root.getModel().getSingularAttribute("user",User.class),JoinType.LEFT);
-//                    predicate.add(cb.like(userJoin.get("nickname").as(String.class), "%" + todoSearcher.getNickname() + "%"));
-//                }
                 Predicate[] pre = new Predicate[predicate.size()];
                 return query.where(predicate.toArray(pre)).getRestriction();
             }
