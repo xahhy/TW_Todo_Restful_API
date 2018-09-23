@@ -78,7 +78,7 @@ public class TodoControllerTest {
         when(todoService.getTodoList()).thenReturn(Arrays.asList(
                 todo
         ));
-        given(todoService.getPageableTodoList(, any())).willReturn(mockPage);
+        given(todoService.getPageableTodoList(any(), any())).willReturn(mockPage);
         mockMvc.perform(get("/todos")).andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(0L));
     }
